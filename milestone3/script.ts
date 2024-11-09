@@ -1,35 +1,39 @@
-// Get the form element
+// Get the main form and display area from HTML
 const resumeForm = document.getElementById('resumeForm') as HTMLFormElement;
 const resumeDisplay = document.getElementById('resume-display') as HTMLElement;
 
+// When someone submits the form, do this
 resumeForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Stop the page from refreshing
     
-    // Get all form values
+    // Get all the information user typed in the form
     const name = (document.getElementById('name') as HTMLInputElement).value;
     const designation = (document.getElementById('designation') as HTMLInputElement).value;
     const phone = (document.getElementById('phone-number') as HTMLInputElement).value;
     const email = (document.getElementById('email') as HTMLInputElement).value;
+    // If user didn't write an objective, use this default text
     const objective = (document.getElementById('objective') as HTMLTextAreaElement).value || "Motivated and adaptable professional seeking to make a positive impact within a forward-thinking organization. Committed to contributing to team success through hard work, attention to detail, and strong organizational abilities. Eager to embrace new opportunities for growth and continuously improve to meet and exceed company goals.";
     const languages = (document.getElementById('languages') as HTMLTextAreaElement).value;
     const skills = (document.getElementById('skills') as HTMLTextAreaElement).value;
     const address = (document.getElementById('address') as HTMLInputElement).value;
 
     
-    // Get profile image
+    // Handle the profile picture
     const imageInput = document.getElementById('profile-image') as HTMLInputElement;
-    const imageFile = imageInput.files?.[0];
+    const imageFile = imageInput.files?.[0]; 
     const imageUrl = imageFile ? URL.createObjectURL(imageFile) : '';
 
-    // Get education entries
+    // Get all education information
     const educationEntries = document.querySelectorAll('.education-entry');
     let educationHTML = '';
     
+    // For each education entry, create HTML
     educationEntries.forEach(entry => {
         const degree = (entry.querySelector('.degree') as HTMLInputElement).value;
         const institute = (entry.querySelector('.institute') as HTMLInputElement).value;
         const year = (entry.querySelector('.year') as HTMLInputElement).value;
         
+        // Create a nice looking box for each education
         educationHTML += `
             <div class="each-education">
                 <h4>${degree}</h4>
@@ -39,18 +43,18 @@ resumeForm.addEventListener('submit', (e) => {
         `;
     });
 
-    // Get experience entries
+    // Get all work experience information
     const experienceEntries = document.querySelectorAll('.experience-entry');
     let experienceHTML = '';
     
-    // Check if any experience is entered
+    // Check if user has any work experience
     let hasExperience = false;
     experienceEntries.forEach(entry => {
         const jobTitle = (entry.querySelector('.job-title') as HTMLInputElement).value;
         const company = (entry.querySelector('.company') as HTMLInputElement).value;
         const duration = (entry.querySelector('.duration') as HTMLInputElement).value;
         
-        // Check if any of the fields are filled
+        // If any experience info is filled, create HTML for it
         if (jobTitle || company || duration) {
             hasExperience = true;
             experienceHTML += `
@@ -62,7 +66,7 @@ resumeForm.addEventListener('submit', (e) => {
         }
     });
 
-    // If no experience is entered, show "Fresher"
+    // If user has no experience, show them as "Fresher"
     if (!hasExperience) {
         experienceHTML = `
             <div class="each-experience">
@@ -71,27 +75,28 @@ resumeForm.addEventListener('submit', (e) => {
         `;
     }
 
-    // Generate skills list with proper formatting
+    // Make skills look nice in a list
+    // Each skill should be on a new line and can have a level (like "HTML - Expert")
     const skillsList = skills
-        .split('\n')  // Split by new line instead of comma
+        .split('\n')  // Break into separate lines
         .filter(skill => skill.trim() !== '')  // Remove empty lines
         .map(skill => {
             const [skillName, level] = skill.split('-').map(s => s.trim());
             return `<li>${skillName}${level ? ` - ${level}` : ''}</li>`;
         })
-        .join('\n');  // Join with newline
+        .join('\n');
 
-    // Generate languages list with proper formatting
+    // Make languages look nice in a list
     const languagesList = languages
-        .split('\n')  // Split by new line instead of comma
-        .filter(lang => lang.trim() !== '')  // Remove empty lines
+        .split('\n')
+        .filter(lang => lang.trim() !== '')
         .map(lang => {
             const [language, level] = lang.split('-').map(l => l.trim());
             return `<li>${language}${level ? ` - ${level}` : ''}</li>`;
         })
-        .join('\n');  // Join with newline
+        .join('\n');
 
-    // Generate resume HTML
+    // Create the final resume HTML with all information
     const resumeHTML = `
         <div class="heading">
         <img src="${imageUrl}" alt="profile-picture">
@@ -151,32 +156,35 @@ resumeForm.addEventListener('submit', (e) => {
     </div>
     `;
 
-    // Display the resume
+    // Show the resume and hide the form
     resumeDisplay.innerHTML = resumeHTML;
     resumeForm.style.display = 'none';
 
-    // Reinitialize toggle button functionality
-    const newToggleButton = document.getElementById("toggleSkillButton") as HTMLButtonElement;
-    const newSkillsList = document.getElementById("skillsList") as HTMLElement;
+    // Make the skills show/hide button work
+    const ToggleButton = document.getElementById("toggleSkillButton") as HTMLButtonElement;
+    const SkillsListResume = document.getElementById("skillsList") as HTMLElement;
 
-    newToggleButton.addEventListener("click", () => {
-        if(newSkillsList.style.display === "block"){
-            newSkillsList.style.display = "none";
-            newToggleButton.textContent = 'Click to Show Skills';
+    ToggleButton.addEventListener("click", () => {
+        // Toggle between showing and hiding skills
+        if(SkillsListResume.style.display === "block"){
+            SkillsListResume.style.display = "none";
+            ToggleButton.textContent = 'Click to Show Skills';
         } else {
-            newSkillsList.style.display = "block";
-            newToggleButton.textContent = "Click to Hide Skills";
+            SkillsListResume.style.display = "block";
+            ToggleButton.textContent = "Click to Hide Skills";
         }
     });
 });
 
-// Add Education Button Functionality with Remove Button
+// When "Add Education" button is clicked
 const addEducationBtn = document.getElementById('add-education') as HTMLButtonElement;
 const educationContainer = document.getElementById('education-container') as HTMLElement;
 
 addEducationBtn.addEventListener('click', () => {
+    // Create new education input fields
     const newEducation = document.createElement('div');
     newEducation.className = 'education-entry';
+    // Add HTML for degree, institute, and year inputs
     newEducation.innerHTML = `
         <div class="edu-grid">
             <div>
@@ -199,13 +207,15 @@ addEducationBtn.addEventListener('click', () => {
     educationContainer.appendChild(newEducation);
 });
 
-// Add Experience Button Functionality with Remove Button
+// When "Add Experience" button is clicked
 const addExperienceBtn = document.getElementById('add-experience') as HTMLButtonElement;
 const experienceContainer = document.getElementById('experience-container') as HTMLElement;
 
 addExperienceBtn.addEventListener('click', () => {
+    // Create new experience input fields
     const newExperience = document.createElement('div');
     newExperience.className = 'experience-entry';
+    // Add HTML for job title, company, and duration inputs
     newExperience.innerHTML = `
         <div class="exp-grid">
             <div>
@@ -228,11 +238,12 @@ addExperienceBtn.addEventListener('click', () => {
     experienceContainer.appendChild(newExperience);
 });
 
-
+// When user selects a profile picture
 document.getElementById('profile-image')?.addEventListener('change', function(e) {
     const preview = document.getElementById('image-preview') as HTMLImageElement;
     const file = (e.target as HTMLInputElement).files?.[0];
     
+    // If user selected a picture, show it in preview
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
