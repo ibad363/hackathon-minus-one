@@ -217,6 +217,16 @@ input[type="file"]::file-selector-button:hover {
 }
 
 
+#edit-tip{
+  display: none;
+  text-align: center; 
+  background-color: var(--secondary); 
+  color: var(--primary); 
+  margin: 15px auto; 
+  padding: 15px
+}
+
+
 /* heading section */
 .heading{
   background-color: var(--primary);
@@ -249,6 +259,11 @@ img{
 .name-section h1{
   font-size: clamp(20px, 5vw, 40px);
   font-weight: bold;
+}
+
+.name-section h1:hover, .name-section h4:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--main-content);
 }
 
 .name-section h4{
@@ -312,6 +327,10 @@ img{
   }
 }
 
+.contact-details a:hover, .contact-details span:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
+}
 
 a{
  color: #36383e;
@@ -341,6 +360,11 @@ a{
   gap: 5px;
 }
 
+.each-education h4:hover, .each-education p:hover, .each-education div:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
+}
+
 .each-education h4{
   font-weight: 500;
   font-size: 20px;
@@ -364,6 +388,11 @@ a{
   @media (max-width:450px) {
     font-size: 18px;
   }
+}
+
+.each-experience h4:hover, .each-experience p:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
 }
 
 /* main content */
@@ -404,10 +433,19 @@ a{
   margin-bottom: 20px;
 }
 
+.career-objective p:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
+}
+
 .language{
   margin-bottom: 20px;
 }
 
+.language ul li:hover{
+  outline: none;
+  border-bottom: 1px solid var(--primary);
+}
 
 button{
   padding: 15px 15px;
@@ -428,6 +466,11 @@ ul li{
   font-size: 18px;
 }
 
+.skills ul li:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
+}
+
 .reference h3{
   margin-top: 20px;
 }
@@ -436,6 +479,10 @@ ul li{
   margin-top: 20px;
 }
 
+.reference p:hover{
+  padding: 2px;
+  border-bottom: 1px solid var(--primary);
+}
 
 @media (max-width:320px) {
   .heading{

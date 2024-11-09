@@ -1,7 +1,7 @@
-var _a;
 // Get the main form and display area from HTML
 var resumeForm = document.getElementById('resumeForm');
 var resumeDisplay = document.getElementById('resume-display');
+var editTip = document.getElementById('edit-tip');
 // When someone submits the form, do this
 resumeForm.addEventListener('submit', function (e) {
     var _a;
@@ -74,6 +74,7 @@ resumeForm.addEventListener('submit', function (e) {
     // Show the resume and hide the form
     resumeDisplay.innerHTML = resumeHTML;
     resumeForm.style.display = 'none';
+    editTip.style.display = 'block';
     // Add profile picture change functionality
     function setupProfilePicChange() {
         var picContainer = document.querySelector('.profile-pic-container');
@@ -144,22 +145,4 @@ addExperienceBtn.addEventListener('click', function () {
     // Add HTML for job title, company, and duration inputs
     newExperience.innerHTML = "\n        <div class=\"exp-grid\">\n            <div>\n                <label for=\"job-title\">Job Title:</label>\n                <input type=\"text\" class=\"job-title\" placeholder=\"e.g. Software Developer\">\n            </div>\n            \n            <div>\n                <label for=\"company\">Company:</label>\n                <input type=\"text\" class=\"company\" placeholder=\"Company Name\">\n            </div>\n            \n            <div>\n                <label for=\"duration\">Duration:</label>\n                <input type=\"text\" class=\"duration\" placeholder=\"e.g. 2020-2022\">\n            </div>\n        </div>\n        <button type=\"button\" class=\"remove-btn\" onclick=\"this.parentElement.remove()\">Remove Experience</button>\n    ";
     experienceContainer.appendChild(newExperience);
-});
-// When user selects a profile picture
-(_a = document.getElementById('profile-image')) === null || _a === void 0 ? void 0 : _a.addEventListener('change', function (e) {
-    var _a;
-    var preview = document.getElementById('image-preview');
-    var file = (_a = e.target.files) === null || _a === void 0 ? void 0 : _a[0];
-    // If user selected a picture, show it in preview
-    if (file) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var _a;
-            if (preview && ((_a = e.target) === null || _a === void 0 ? void 0 : _a.result)) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-        };
-        reader.readAsDataURL(file);
-    }
 });

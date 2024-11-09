@@ -1,6 +1,7 @@
 // Get the main form and display area from HTML
 const resumeForm = document.getElementById('resumeForm') as HTMLFormElement;
 const resumeDisplay = document.getElementById('resume-display') as HTMLElement;
+const editTip = document.getElementById('edit-tip') as HTMLElement;
 
 // When someone submits the form, do this
 resumeForm.addEventListener('submit', (e) => {
@@ -160,6 +161,7 @@ resumeForm.addEventListener('submit', (e) => {
     // Show the resume and hide the form
     resumeDisplay.innerHTML = resumeHTML;
     resumeForm.style.display = 'none';
+    editTip.style.display = 'block';
 
     // Add profile picture change functionality
     function setupProfilePicChange() {
@@ -276,22 +278,4 @@ addExperienceBtn.addEventListener('click', () => {
         <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove Experience</button>
     `;
     experienceContainer.appendChild(newExperience);
-});
-
-// When user selects a profile picture
-document.getElementById('profile-image')?.addEventListener('change', function(e) {
-    const preview = document.getElementById('image-preview') as HTMLImageElement;
-    const file = (e.target as HTMLInputElement).files?.[0];
-    
-    // If user selected a picture, show it in preview
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            if (preview && e.target?.result) {
-                preview.src = e.target.result as string;
-                preview.style.display = 'block';
-            }
-        }
-        reader.readAsDataURL(file);
-    }
 });
