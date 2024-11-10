@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 5</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Form -->
+        <form id="resumeForm">
+            <h1 id="form-heading">Shareable Resume Builder</h1>
+            <fieldset class="personal-info">
+                <legend>
+                    <h2>Personal Information</h2>
+                </legend>
+                <div class="name">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" placeholder="Enter Your Name"  required>
+                </div>
+
+                <div class="designation">
+                    <label for="designation">Professional Designation (Optional):</label>
+                    <input type="text" id="designation" placeholder="e.g. Software Engineer, Project Manager" >
+                </div>
+                
+                <div class="number">
+                    <label for="phone-number">Phone Number:</label>
+                    <input type="number" id="phone-number" placeholder="Enter Your Phone Number"  required>
+                </div>
+
+                <div class="email">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Enter Your Email"  required>
+                </div>
+
+                <div class="address">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" placeholder="Enter Your Address" required>
+                </div>
+
+                <div class="image-upload">
+                    <label for="profile-image">Profile Image:</label>
+                    <div class="upload-wrapper">
+                        <input type="file" id="profile-image" accept="image/*" required>
+                        <img id="image-preview" src="#" alt="Preview" style="display: none;">
+                    </div>
+                </div>
+    
+            </fieldset>
+
+            <!-- Career Objective -->
+            <fieldset>
+                <legend><h2>Career Objective (Optional)</h2></legend>
+                <label for="objective">Career Objective:</label>
+                <textarea id="objective" placeholder="Enter your career objective" rows="4" cols="50"></textarea>
+            </fieldset>
+
+            <!-- Education -->
+            <fieldset>
+                <legend><h2>Education</h2></legend>
+                <div id="education-container">
+                    <div class="education-entry">
+                        <div class="edu-grid">
+                            <div>
+                                <label for="degree">Degree/Certificate:</label>
+                                <input type="text" class="degree" placeholder="e.g. Bachelor in Computer Science" required>
+                            </div>
+                            
+                            <div>
+                                <label for="institute">Institute:</label>
+                                <input type="text" class="institute" placeholder="Institute Name" required>
+                            </div>
+                            
+                            <div>
+                                <label for="year">Year:</label>
+                                <input type="text" class="year" placeholder="e.g. 2020-2024" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="add-education" class="add-btn">Add More Education</button>
+            </fieldset>
+
+            <!-- Experience -->
+            <fieldset>
+                <legend><h2>Experience (Optional)</h2></legend>
+                <div id="experience-container">
+                    <div class="experience-entry">
+                        <div class="exp-grid">
+                            <div>
+                                <label for="job-title">Job Title:</label>
+                                <input type="text" class="job-title" placeholder="e.g. Software Developer">
+                            </div>
+                            
+                            <div>
+                                <label for="company">Company:</label>
+                                <input type="text" class="company" placeholder="Company Name">
+                            </div>
+                            
+                            <div>
+                                <label for="duration">Duration:</label>
+                                <input type="text" class="duration" placeholder="e.g. 2020-2022">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="add-experience" class="add-btn">Add More Experience</button>
+            </fieldset>
+
+            <!-- Languages -->
+            <fieldset>
+                <legend><h2>Languages</h2></legend>
+                <label for="languages">Languages Known: (Write each language in new line)</label>
+                <textarea id="languages" placeholder="Enter languages you know (e.g. English, Urdu, etc.)" rows="4" cols="50" required></textarea>
+            </fieldset>
+
+            <!-- Skills -->
+            <fieldset>
+                <legend><h2>Skills</h2></legend>
+                <label for="skills">Your Skills: (Write each language in new line)</label>
+                <textarea id="skills" placeholder="Enter Your Skills" rows="4" cols="50" required></textarea>
+            </fieldset>
+            <!-- Generate Resume Button -->
+            <button type="submit">Generate Resume</button>
+        </form>
+        
+        <p id="edit-tip">Tip: Click on any text to edit it directly!</p>
+
+        <!-- Resume Preview -->
+         <div id="resume-display">
+            <!-- resume will be displayed here -->
+         </div>
+
+         <!-- sharing section -->
+         <div id="share-section" style="display: none;">
+            <div class="share-container">
+                <input type="text" id="share-link" readonly>
+                <button id="copy-link">Copy Link</button>
+                <button id="download-pdf">Download PDF</button>
+                <button id="print-pdf">Print</button>
+            </div>
+        </div>
+
+         
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
