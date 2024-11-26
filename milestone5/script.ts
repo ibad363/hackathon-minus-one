@@ -340,13 +340,11 @@ function downloadOrPrintResume() {
                 <html>
                     <head>
                         <title>Download Resume</title>
+                        <link rel="stylesheet" href="styles.css">
                         <style>
                             body { margin: 0; font-family: Arial, sans-serif; }
-                            /* Include your existing styles here */
-                            /* Example styles */
                             .heading { text-align: center; }
                             .content-section { padding: 20px; }
-                            /* Add any additional styles for the PDF here */
                         </style>
                     </head>
                     <body>${resumeDisplay.innerHTML}</body>
