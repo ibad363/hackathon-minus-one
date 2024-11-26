@@ -1,27 +1,3 @@
-// Check for shared resume data on page load
-window.addEventListener('load', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const encodedData = urlParams.get('data');
-    
-    if (encodedData) {
-        const resumeData = JSON.parse(atob(encodedData));
-        
-        // Fill form fields with shared data
-        (document.getElementById('name') as HTMLInputElement).value = resumeData.name;
-        (document.getElementById('designation') as HTMLInputElement).value = resumeData.designation;
-        (document.getElementById('phone-number') as HTMLInputElement).value = resumeData.phone;
-        (document.getElementById('email') as HTMLInputElement).value = resumeData.email;
-        (document.getElementById('objective') as HTMLTextAreaElement).value = resumeData.objective;
-        (document.getElementById('languages') as HTMLTextAreaElement).value = resumeData.languages;
-        (document.getElementById('skills') as HTMLTextAreaElement).value = resumeData.skills;
-        (document.getElementById('address') as HTMLInputElement).value = resumeData.address;
-        
-        // Auto-submit form to generate resume
-        resumeForm.dispatchEvent(new Event('submit'));
-    }
-});
-
-
 // Get the main form and display area from HTML
 const resumeForm = document.getElementById('resumeForm') as HTMLFormElement;
 const resumeDisplay = document.getElementById('resume-display') as HTMLElement;
@@ -168,7 +144,7 @@ resumeForm.addEventListener('submit', (e) => {
 
                 <div class="skills">
                     <h3>Skills</h3>
-                    <ul id="skillsList" contenteditable="true">
+                    <ul id="skillsList" contenteditable="true" style="display: block;">
                         ${skillsList}
                     </ul>
                 </div>
@@ -186,48 +162,23 @@ resumeForm.addEventListener('submit', (e) => {
     resumeForm.style.display = 'none';
     editTip.style.display = 'block';
 
-    // Generate and show shareable link
-    const shareSection = document.getElementById('share-section') as HTMLElement;
-    shareSection.style.display = 'block';
+    // Store the resume in localStorage
+    localStorage.setItem(name, resumeHTML); // Store resume with name as key
 
-    // Create shareable link
-    const resumeData = {
-        name,
-        designation,
-        phone,
-        email,
-        objective,
-        languages,
-        skills,
-        address,
-        education: [...Array.prototype.slice.call(educationEntries)].map(entry => ({
-            degree: (entry.querySelector('.degree') as HTMLInputElement)?.value || '',
-            institute: (entry.querySelector('.institute') as HTMLInputElement)?.value || '',
-            year: (entry.querySelector('.year') as HTMLInputElement)?.value || ''
-        })),
-        experience: [...Array.prototype.slice.call(experienceEntries)].map(entry => ({
-            jobTitle: (entry.querySelector('.job-title') as HTMLInputElement)?.value || '',
-            company: (entry.querySelector('.company') as HTMLInputElement)?.value || '',
-            duration: (entry.querySelector('.duration') as HTMLInputElement)?.value || ''
-        }))
-    };
+    // Generate shareable link
+    const shareableLink = `${window.location.origin}/index.html?name=${encodeURIComponent(name)}`;
+    console.log("Shareable Link: ", shareableLink); // You can display this link to the user
 
-    const encodedData = btoa(JSON.stringify(resumeData));
-    const shareableLink = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
-
+    // After generating the resume, display the shareable link
     const shareLinkInput = document.getElementById('share-link') as HTMLInputElement;
-    shareLinkInput.value = shareableLink;
+    if (shareLinkInput) {
+        shareLinkInput.value = shareableLink; // Set the shareable link in the input
+    }
 
-    // Copy link button functionality
-    const copyButton = document.getElementById('copy-link') as HTMLButtonElement;
-    copyButton.addEventListener('click', () => {
-        shareLinkInput.select();
-        document.execCommand('copy');
-        copyButton.textContent = 'Copied!';
-        setTimeout(() => {
-            copyButton.textContent = 'Copy Link';
-        }, 2000);
-    });
+    const shareSection = document.getElementById('share-section') as HTMLElement;
+    if (shareSection) {
+        shareSection.style.display = 'block'; // Show the share section
+    }
 
     // Add profile picture change functionality
     function setupProfilePicChange() {
@@ -267,7 +218,6 @@ resumeForm.addEventListener('submit', (e) => {
 
     // Initialize all interactive features
     setupProfilePicChange();
-    
 });
 
 // When "Add Education" button is clicked
@@ -324,7 +274,7 @@ addExperienceBtn.addEventListener('click', () => {
             
             <div>
                 <label for="duration">Duration:</label>
-                <input type="text" class="duration" placeholder=x"e.g. 2020-2022">
+                <input type="text" class="duration" placeholder="e.g. 2020-2022">
             </div>
         </div>
         <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove Experience</button>
@@ -332,376 +282,84 @@ addExperienceBtn.addEventListener('click', () => {
     experienceContainer.appendChild(newExperience);
 });
 
+// Function to retrieve and display the resume from localStorage
+function retrieveResume() {
+    // Get the name parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name');
 
+    if (name) {
+        // Retrieve the resume from localStorage using the name as key
+        const resumeHTML = localStorage.getItem(name);
 
-
-
-
-
-
-// Add this interface for PDF options
-interface PdfOptions {
-    margin: number[] | number;
-    filename: string;
-    image: { type: string; quality: number };
-    html2canvas: { 
-        scale: number;
-        useCORS?: boolean;
-        letterRendering?: boolean;
-    };
-    jsPDF: { 
-        unit: string; 
-        format: string; 
-        orientation: string;
-        compress: boolean;
-        hotfixes?: string[];
-    };
-    pagebreak: { mode: string[] };
+        if (resumeHTML) {
+            // Display the retrieved resume
+            const resumeDisplay = document.getElementById('resume-display') as HTMLElement;
+            resumeDisplay.innerHTML = resumeHTML; // Set the inner HTML to the retrieved resume
+            
+            // Hide the form
+            const resumeForm = document.getElementById('resumeForm') as HTMLFormElement;
+            if (resumeForm) {
+                resumeForm.style.display = 'none'; // Hide the form
+            }
+        } else {
+            console.log("No resume found for this name.");
+        }
+    } else {
+        console.log("No name parameter in the URL.");
+    }
 }
 
-// Add type declaration for html2pdf
-declare const html2pdf: any;
+// Copy link functionality
+const copyLinkButton = document.getElementById('copy-link') as HTMLButtonElement;
+copyLinkButton.addEventListener('click', () => {
+    const shareLinkInput = document.getElementById('share-link') as HTMLInputElement;
+    if (shareLinkInput) {
+        shareLinkInput.select(); // Select the link
+        document.execCommand('copy'); // Copy the link to clipboard
+        copyLinkButton.textContent = 'Link Copied!'; // Change button text to "Link Copied!"
 
-// Add this before downloadResume function
-const opt: PdfOptions = {
-    margin: 0, // Minimum margins
-    filename: 'resume.pdf',
-    image: { type: 'jpeg', quality: 0.95 },
-    html2canvas: { 
-        scale: 1.5,
-        useCORS: true,
-        letterRendering: true
-    },
-    jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait',
-        compress: true,
-        hotfixes: ["px_scaling"]
-    },
-    pagebreak: { mode: ['avoid-all'] }
-};
+        // Remove the "Link Copied!" text after 2 seconds and revert back to "Copy Link"
+        setTimeout(() => {
+            copyLinkButton.textContent = 'Copy Link';
+        }, 2000);
+    }
+});
 
-// Add this function before downloadResume
-const optimizeForPDF = (element: HTMLElement) => {
-    // Overall resume display scaling
-    element.style.margin = '0';
-    element.style.padding = '0';
-    element.style.maxHeight = '297mm';  // A4 height
-    element.style.width = '210mm';      // A4 width
-    element.style.overflow = 'visible';
-    element.style.transform = 'none';
-    element.style.transformOrigin = 'top left';
+// Call the function to retrieve the resume when the page loads
+window.onload = retrieveResume;
 
-    // Optimize heading section
-    const headingSection = element.querySelector('.heading') as HTMLElement;
-    if (headingSection) {
-        headingSection.style.padding = '15px 0';
-        headingSection.style.gridTemplateColumns = '200px 1fr';
-        
-        // Profile picture optimization
-        const profilePic = headingSection.querySelector('img') as HTMLImageElement;
-        if (profilePic) {
-            profilePic.style.width = '120px';
-            profilePic.style.height = '120px';
-        }
+// Function to download the resume as PDF or open print dialog
+function downloadOrPrintResume() {
+    const resumeDisplay = document.getElementById('resume-display'); // Get the resume display element
 
-        // Name section optimization
-        const nameSection = headingSection.querySelector('.name-section') as HTMLElement;
-        if (nameSection) {
-            const h1 = nameSection.querySelector('h1');
-            const h4 = nameSection.querySelector('h4');
-            if (h1) h1.style.fontSize = '24px';
-            if (h4) h4.style.fontSize = '16px';
-        }
-
-        // Design element adjustment
-        const design = headingSection.querySelector('#design') as HTMLElement;
-        if (design) {
-            design.style.position = 'absolute';
-            design.style.bottom = '-39px';
-            design.style.width = '200px';
-            design.style.height = '40px';
-            design.style.left = '0';
-            design.style.zIndex = '1';
-            
-            // Create triangle using SVG with exact measurements
-            const svgTriangle = `
-                <svg width="200" height="40" viewBox="0 0 200 40" style="position: absolute; top: 0; left: 0;">
-                    <defs>
-                        <clipPath id="triangleClip">
-                            <path d="M0,0 L200,0 L100,40 L0,0 Z"/>
-                        </clipPath>
-                    </defs>
-                    <rect width="200" height="40" fill="#284b63" clip-path="url(#triangleClip)"/>
-                </svg>
-            `;
-            design.innerHTML = svgTriangle;
-            
-            // Remove any background color from the container
-            design.style.backgroundColor = 'transparent';
+    if (resumeDisplay) {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Download Resume</title>
+                        <style>
+                            body { margin: 0; font-family: Arial, sans-serif; }
+                            /* Include your existing styles here */
+                            /* Example styles */
+                            .heading { text-align: center; }
+                            .content-section { padding: 20px; }
+                            /* Add any additional styles for the PDF here */
+                        </style>
+                    </head>
+                    <body>${resumeDisplay.innerHTML}</body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print(); // Open print dialog
         }
     }
-
-    // Content section optimization
-    const contentSection = element.querySelector('.content-section') as HTMLElement;
-    if (contentSection) {
-        contentSection.style.display = 'grid';
-        contentSection.style.gridTemplateColumns = '200px 1fr';
-        contentSection.style.gap = '0';
-        contentSection.style.paddingBottom = '20px';  // Reduce bottom padding
-        
-        
-        // Sidebar optimization
-        const sidebar = contentSection.querySelector('.sidebar') as HTMLElement;
-        if (sidebar) {
-            sidebar.style.padding = '60px 15px 20px 15px';
-            sidebar.style.fontSize = '12px';
-            sidebar.style.backgroundColor = '#f0f5f9';
-            sidebar.style.minHeight = '100%';
-            
-            // Adjust sidebar headings
-            const h3Elements = sidebar.querySelectorAll('h3');
-            h3Elements.forEach(h3 => {
-                h3.style.fontSize = '18px';
-                h3.style.marginBottom = '8px';
-            });
-
-            // Adjust educations headings
-            const educationSection = sidebar.querySelector('.education');
-            if (educationSection) {
-                const h4Elements = educationSection.querySelectorAll('h4');
-                h4Elements.forEach(h4 => {
-                    h4.style.fontSize = '14px';
-                    h4.style.marginBottom = '4px';
-                    h4.style.fontWeight = '600';
-                    h4.style.color = '#333';
-                });
-            }
-        }
-
-        // Main content optimization
-        const mainContent = contentSection.querySelector('.main-content') as HTMLElement;
-        if (mainContent) {
-            mainContent.style.padding = '40px 15px 20px 15px';
-            mainContent.style.fontSize = '12px';
-            mainContent.style.backgroundColor = '#b4c4cc';
-            
-            // Adjust main content headings
-            const h3Elements = mainContent.querySelectorAll('h3');
-            h3Elements.forEach(h3 => {
-                h3.style.fontSize = '16px';
-                h3.style.marginBottom = '2px';
-            });
-
-            const paragraphs = mainContent.querySelectorAll('p');
-            paragraphs.forEach(p => {
-                p.style.fontSize = '12px';
-                p.style.lineHeight = '1.4';
-                p.style.margin = '0 0 2px 0';
-            });
-
-            // Adjust lists spacing
-            const lists = mainContent.querySelectorAll('ul');
-            lists.forEach(ul => {
-                const items = ul.querySelectorAll('li');
-                items.forEach(li => {
-                    li.style.margin = '8px 0';
-                    li.style.fontSize = '12px';
-                });
-            });
-        }
-    }
-};
-
-// Update the download function
-const downloadResume = async (): Promise<void> => {
-    const resumeElement = document.getElementById('resume-display');
-    const editTip = document.getElementById('edit-tip');
-    const shareSection = document.getElementById('share-section');
-    
-    if (!resumeElement) return;
-
-    // Hide buttons, edit tip and share section and save original styles
-    const buttons = resumeElement.querySelectorAll('button');
-    const originalStyles = new Map();
-    
-    // Hide edit tip and share section
-    if (editTip) editTip.style.display = 'none';
-    if (shareSection) shareSection.style.display = 'none';
-    
-    buttons.forEach(button => {
-        originalStyles.set(button, button.style.display);
-        button.style.display = 'none';
-    });
-
-    try {
-        // Save original styles
-        const originalFontSize = resumeElement.style.fontSize;
-        const originalTransform = resumeElement.style.transform;
-
-        // Optimize for PDF
-        optimizeForPDF(resumeElement);
-        
-        // Scale down if needed
-        const contentHeight = resumeElement.getBoundingClientRect().height;
-        if (contentHeight > 1000) {
-            resumeElement.style.transform = 'scale(0.9)';
-            resumeElement.style.transformOrigin = 'top left';
-        }
-
-        // Generate PDF
-        await html2pdf()
-            .from(resumeElement)
-            .set(opt)
-            .save();
-
-        // Restore original styles
-        resumeElement.style.fontSize = originalFontSize;
-        resumeElement.style.transform = originalTransform;
-        buttons.forEach(button => {
-            button.style.display = originalStyles.get(button);
-        });
-        
-        // Show edit tip and share section again
-        // if (editTip) editTip.style.display = 'block';
-        // if (shareSection) shareSection.style.display = 'block';
-
-    } catch (error) {
-        console.error('PDF generation failed:', error);
-        alert('Failed to generate PDF. Please try again.');
-        
-        // Restore all elements in case of error
-        buttons.forEach(button => {
-            button.style.display = originalStyles.get(button);
-        });
-        if (editTip) editTip.style.display = 'block';
-        if (shareSection) shareSection.style.display = 'block';
-    }
-};
-
-// Add event listener for download button
-const downloadPdfButton = document.getElementById('download-pdf') as HTMLButtonElement;
-if (downloadPdfButton) {
-    downloadPdfButton.addEventListener('click', downloadResume);
 }
 
-// Add preview button functionality
-const printPdf = document.getElementById('print-pdf') as HTMLButtonElement;
-if (printPdf) {
-    printPdf.addEventListener('click', async () => {
-        const resumeElement = document.getElementById('resume-display');
-        if (!resumeElement) return;
-
-        // Create print-specific stylesheet
-        const style = document.createElement('style');
-        style.id = 'print-styles';
-        style.textContent = `
-            @media print {
-                @page {
-                    size: A4;
-                    margin: 0;
-                }
-                html, body {
-                width: 210mm;
-                height: 297mm;
-                margin: 0 !important;
-                padding: 0 !important;
-                }
-                body * {
-                    visibility: hidden;
-                }
-                #resume-display, #resume-display * {
-                    visibility: visible;
-                }
-                #resume-display {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 210mm;
-                    height: 297mm;
-                    margin: 0;
-                    padding: 0;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    page-break-after: avoid;
-                    page-break-before: avoid;
-                }
-
-                header, footer {
-                    display: none !important;
-                }
-
-
-                .heading {
-                    padding: 15px 0 !important;
-                    background-color: #284b63 !important;
-                    color: white !important; 
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                    color-adjust: exact !important;
-                    width: 100% !important;
-                    margin: 0 !important;
-                    position: relative !important;
-                }
-                .profile-pic-container img {
-                    width: 120px !important;
-                    height: 120px !important;
-                }
-                .content-section {
-                    display: grid !important;
-                    grid-template-columns: 200px 1fr !important;
-                    width: 100% !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    gap: 0 !important;
-                    border: none !important;
-                }
-                .sidebar {
-                    padding: 60px 15px 20px 15px !important;
-                    font-size: 12px !important;
-                    background-color: #f0f5f9 !important;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                    margin: 0 !important;
-                    border: none !important;
-                    height: 100% !important;
-                }
-                .main-content {
-                    padding: 40px 15px 20px 15px !important;
-                    font-size: 12px !important;
-                    background-color: #b4c4cc !important;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                    margin: 0 !important;
-                    border: none !important;
-                    height: 100% !important;
-                }
-                button, .remove-btn {
-                    display: none !important;
-                }
-            }
-        `;
-
-        try {
-            // Add print styles
-            document.head.appendChild(style);
-            
-            // Apply optimization
-            optimizeForPDF(resumeElement);
-
-            // Open print dialog
-            window.print();
-
-        } catch (error) {
-            console.error('Print failed:', error);
-            alert('Printing failed. Please try again.');
-        } finally {
-            // Remove print styles
-            const printStyle = document.getElementById('print-styles');
-            if (printStyle) {
-                printStyle.remove();
-            }
-        }
-    });
+// Add event listener to the merged button
+const downloadPrintButton = document.getElementById('download-print') as HTMLButtonElement;
+if (downloadPrintButton) {
+    downloadPrintButton.addEventListener('click', downloadOrPrintResume);
 }

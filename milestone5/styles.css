@@ -537,7 +537,7 @@ ul li{
     font-size: 14px;
 }
 
-#copy-link, #download-pdf, #print-pdf {
+#copy-link, #download-print {
     background-color: var(--primary);
     color: white;
     padding: 12px 20px;
@@ -549,7 +549,7 @@ ul li{
     transition: background-color 0.3s ease;
 }
 
-#copy-link:hover, #download-pdf:hover, #print-pdf:hover {
+#copy-link:hover, #download-print:hover {
     background-color: #1d3a4d;
 }
 
@@ -561,39 +561,5 @@ ul li{
     #share-link {
         width: 100%;
         margin-bottom: 10px;
-    }
-}
-
-
-/* Download PDF styling */
-@media print {
-    #resume-display {
-        width: 210mm !important;
-        height: 297mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    .heading {
-        padding: 5px !important;
-    }
-    
-    .content-section {
-        padding: 5px !important;
-        gap: 5px !important;
-    }
-    
-    .sidebar, .main-content {
-        padding: 5px !important;
-    }
-    
-    h1 { font-size: 22px !important; }
-    h2 { font-size: 18px !important; }
-    h3 { font-size: 16px !important; }
-    h4 { font-size: 14px !important; }
-    p, li { font-size: 12px !important; }
-    
-    button, #edit-tip, #share-section {
-        display: none !important;
     }
 }
